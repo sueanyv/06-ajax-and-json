@@ -1,4 +1,4 @@
-function Article (opts) {
+function Article(opts) {
   for (var keys in opts) {
     this[keys] = opts[keys];
   }
@@ -16,7 +16,7 @@ Article.allArticles = [];
 
 Article.prototype.toHtml = function(scriptTemplateId) {
   var template = Handlebars.compile($(scriptTemplateId).text());
-  this.daysAgo = parseInt((new Date() - new Date(this.publishedOn))/60/60/24/1000);
+  this.daysAgo = parseInt((new Date() - new Date(this.publishedOn)) / 60 / 60 / 24 / 1000);
   this.publishStatus = this.publishedOn ? 'published ' + this.daysAgo + ' days ago' : '(draft)';
   this.body = marked(this.body);
   return template(this);
@@ -31,12 +31,12 @@ Article.prototype.toHtml = function(scriptTemplateId) {
     It will take in our data, and process it via the Article constructor: */
 
 Article.loadAll = function(inputData) {
-  inputData.sort(function(a,b) {
+  inputData.sort(function(a, b) {
     return (new Date(b.publishedOn)) - (new Date(a.publishedOn));
   })
-  .forEach(function(ele) {
-    Article.allArticles.push(new Article(ele));
-  });
+    .forEach(function(ele) {
+      Article.allArticles.push(new Article(ele));
+    });
 };
 
 /* This function below will retrieve the data from either a local or remote
@@ -47,11 +47,20 @@ Article.fetchAll = function() {
     1. We can process and load it,
     2. Then we can render the index page.  */
   } else {
-    /* Without our localStorage in memory, we need to:
-    1. Retrieve our JSON file with $.getJSON
-      1.a Load our json data
-      1.b Store that data in localStorage so that we can skip the server call next time,
-      1.c And then render the index page.*/
+    $.getJSON('../data/blogArticles.json', function(data) {
+      var strigifiedData = JSON.strigify(data);
+      localStorage.setItem('blogArticles', strigifiedData);
+      Article.loadAll(strigifiedData);
+      articleView.renderIndexPage();
+
+      setItem
+      /* Without our localStorage in memory, we need to:
+      1. Retrieve our JSON file with $.getJSON
+        1.a Load our json data
+        1.b Store that data in localStorage so that we can skip the server call next time,
+        1.c And then render the index page.*/
+      articleView.renderIndexPage();
+    });
   }
 };
 
